@@ -1,0 +1,5 @@
+﻿D:\AIR 3\starxpand_sdk_wrapper\android\src\main\AndroidManifest.xml
+D:\AIR 3\starxpand_sdk_wrapper\android\src\main\kotlin\dev\orioletech\starxpand_sdk_wrapper\Pigeon.g.kt
+D:\AIR 3\starxpand_sdk_wrapper\android\src\main\kotlin\dev\orioletech\starxpand_sdk_wrapper\StarxpandSdkWrapperPlugin.kt
+D:\AIR 3\starxpand_sdk_wrapper\android\src\main\res\xml\accessory_filter.xml
+D:\AIR 3\starxpand_sdk_wrapper\android\src\main\res\xml\device_filter.xml

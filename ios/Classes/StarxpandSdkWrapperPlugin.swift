@@ -328,12 +328,16 @@ public class StarxpandSdkWrapperPlugin: NSObject, FlutterPlugin, StarHostApi {
             } else {
                 modelName = "Unknown"
             }
-            
+
+            // Get LAN IP address (nil for non-LAN interfaces)
+            let ipAddress = printer.information?.detail.lan?.ipAddress
+
             // Create Device object
             let device = Device(
                 identifier: connectionSettings.identifier,
                 iface: pigeonIface,
-                model: modelName
+                model: modelName,
+                ipAddress: ipAddress
             )
             
             // Log and notify Flutter

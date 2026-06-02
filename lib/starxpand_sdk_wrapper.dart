@@ -8,18 +8,14 @@ class StarDevice {
   final String identifier;
   final StarInterfaceType interface;
   final String? model;
-  StarDevice(this.identifier, this.interface, {this.model});
+  final String? ipAddress;
+  StarDevice(this.identifier, this.interface, {this.model, this.ipAddress});
 }
 
 class StarStatus {
   final bool online, coverOpen, paperEmpty;
   final String? raw;
-  StarStatus({
-    required this.online,
-    required this.coverOpen,
-    required this.paperEmpty,
-    this.raw,
-  });
+  StarStatus({required this.online, required this.coverOpen, required this.paperEmpty, this.raw});
 }
 
 typedef DeviceCallback = void Function(StarDevice);
@@ -44,28 +40,16 @@ class StarXpand implements StarFlutterApi {
 
   // ---------- Public API (calls native via HostApi) ----------
 
-  Future<void> startDiscovery({
-    Set<StarInterfaceType> interfaces = const {},
-    Duration timeout = const Duration(seconds: 8),
-  }) async {
+  Future<void> startDiscovery({Set<StarInterfaceType> interfaces = const {}, Duration timeout = const Duration(seconds: 8)}) async {
     await _host.startDiscovery(
-      DiscoverOptions(
-        interfaces: interfaces.map((e) => InterfaceType.values[e.index]).toList(),
-        timeoutMs: timeout.inMilliseconds,
-      ),
+      DiscoverOptions(interfaces: interfaces.map((e) => InterfaceType.values[e.index]).toList(), timeoutMs: timeout.inMilliseconds),
     );
   }
 
   Future<void> stopDiscovery() => _host.stopDiscovery();
 
   Future<bool> connect(StarDevice d, {bool monitor = true}) {
-    return _host.connect(
-      ConnectRequest(
-        identifier: d.identifier,
-        iface: InterfaceType.values[d.interface.index],
-        monitor: monitor,
-      ),
-    );
+    return _host.connect(ConnectRequest(identifier: d.identifier, iface: InterfaceType.values[d.interface.index], monitor: monitor));
   }
 
   Future<void> disconnect() => _host.disconnect();
@@ -102,24 +86,14 @@ class StarXpand implements StarFlutterApi {
 
   /// Print raw PNG bytes directly.
   Future<bool> printImageBytes(Uint8List imageBytes, {int width = 576}) {
-    return _host.printImage(
-      ImageRequest(
-        imageBytes: imageBytes.toList(),
-        width: width,
-      ),
-    );
+    return _host.printImage(ImageRequest(imageBytes: imageBytes.toList(), width: width));
   }
 
   Future<bool> openCashDrawer() => _host.openCashDrawer();
 
   Future<StarStatus> getStatus() async {
     final s = await _host.getStatus();
-    return StarStatus(
-      online: s.online ?? false,
-      coverOpen: s.coverOpen ?? false,
-      paperEmpty: s.paperEmpty ?? false,
-      raw: s.raw,
-    );
+    return StarStatus(online: s.online ?? false, coverOpen: s.coverOpen ?? false, paperEmpty: s.paperEmpty ?? false, raw: s.raw);
   }
 
   // ---------- Callbacks from native (FlutterApi) ----------
@@ -127,11 +101,7 @@ class StarXpand implements StarFlutterApi {
 
   @override
   void onDeviceFound(Device d) {
-    final dev = StarDevice(
-      d.identifier ?? '',
-      StarInterfaceType.values[d.iface!.index],
-      model: d.model,
-    );
+    final dev = StarDevice(d.identifier ?? '', StarInterfaceType.values[d.iface!.index], model: d.model, ipAddress: d.ipAddress);
     deviceFound?.call(dev);
   }
 
@@ -143,12 +113,7 @@ class StarXpand implements StarFlutterApi {
   @override
   void onStatus(Status s) {
     statusChanged?.call(
-      StarStatus(
-        online: s.online ?? false,
-        coverOpen: s.coverOpen ?? false,
-        paperEmpty: s.paperEmpty ?? false,
-        raw: s.raw,
-      ),
+      StarStatus(online: s.online ?? false, coverOpen: s.coverOpen ?? false, paperEmpty: s.paperEmpty ?? false, raw: s.raw),
     );
   }
 

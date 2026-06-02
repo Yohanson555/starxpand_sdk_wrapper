@@ -91,11 +91,13 @@ class StarxpandSdkWrapperPlugin :
                         }
 
                         val modelName = printer.information?.model?.name ?: "Unknown"
-                        
+                        val ipAddress = printer.information?.detail?.lan?.ipAddress
+
                         val device = Device(
                             identifier = connectionSettings.identifier,
                             iface = pigeonIface,
-                            model = modelName
+                            model = modelName,
+                            ipAddress = ipAddress
                         )
                         
                         flutterApi.onLog("Found device: ${device.identifier} (${device.model})") { }

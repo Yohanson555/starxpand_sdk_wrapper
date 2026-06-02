@@ -298,6 +298,7 @@ class Device {
   String? identifier;  // Connection identifier
   InterfaceType? iface; // Interface type
   String? model;        // Printer model
+  String? ipAddress;    // LAN IP address (null for non-LAN interfaces)
 }
 ```
 

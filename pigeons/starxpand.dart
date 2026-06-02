@@ -16,6 +16,7 @@ class Device {
   String? identifier; // IP, MAC, or USB path
   InterfaceType? iface;
   String? model; // optional model name
+  String? ipAddress; // LAN IP address (null for non-LAN)
 }
 
 class Status {
