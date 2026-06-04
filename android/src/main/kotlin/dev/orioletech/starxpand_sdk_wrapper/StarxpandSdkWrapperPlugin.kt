@@ -13,6 +13,9 @@ import com.starmicronics.stario10.StarPrinter
 import com.starmicronics.stario10.starxpandcommand.StarXpandCommandBuilder
 import com.starmicronics.stario10.starxpandcommand.DocumentBuilder
 import com.starmicronics.stario10.starxpandcommand.PrinterBuilder
+import com.starmicronics.stario10.starxpandcommand.DrawerBuilder
+import com.starmicronics.stario10.starxpandcommand.drawer.OpenParameter
+import com.starmicronics.stario10.starxpandcommand.drawer.Channel
 import kotlinx.coroutines.*
 
 class StarxpandSdkWrapperPlugin :
@@ -306,20 +309,21 @@ class StarxpandSdkWrapperPlugin :
     override fun openCashDrawer(): Boolean {
         scope.launch {
             try {
-                // Simplified cash drawer - just send open command
-                // You may need to adjust this based on your specific printer model
                 val builder = StarXpandCommandBuilder()
                 builder.addDocument(
-                    DocumentBuilder().addPrinter(
-                        PrinterBuilder()
-                            .actionPrintText("\n") // Some printers need this
+                    DocumentBuilder().addDrawer(
+                        DrawerBuilder().actionOpen(
+                            OpenParameter()
+                                .setChannel(Channel.No1)
+                                .setOnTime(200)
+                        )
                     )
                 )
-                
+
                 printer?.printAsync(builder.getCommands())?.await()
-                
+
                 mainHandler.post {
-                    flutterApi.onLog("Cash drawer command sent (implementation may need adjustment per printer model)") { }
+                    flutterApi.onLog("Cash drawer opened") { }
                 }
             } catch (e: Exception) {
                 mainHandler.post {
@@ -327,7 +331,7 @@ class StarxpandSdkWrapperPlugin :
                 }
             }
         }
-        
+
         return true
     }
 
