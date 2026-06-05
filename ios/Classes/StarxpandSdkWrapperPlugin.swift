@@ -330,7 +330,7 @@ public class StarxpandSdkWrapperPlugin: NSObject, FlutterPlugin, StarHostApi {
             }
 
             // Get LAN IP address (nil for non-LAN interfaces)
-            let ipAddress = printer.information?.detail.lan?.ipAddress
+            let ipAddress = printer.information?.detail.lan.ipAddress
 
             // Create Device object
             let device = Device(
