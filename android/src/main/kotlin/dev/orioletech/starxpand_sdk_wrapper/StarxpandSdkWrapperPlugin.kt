@@ -306,33 +306,38 @@ class StarxpandSdkWrapperPlugin :
         }
     }
 
-    override fun openCashDrawer(): Boolean {
-        scope.launch {
-            try {
-                val builder = StarXpandCommandBuilder()
-                builder.addDocument(
-                    DocumentBuilder().addDrawer(
-                        DrawerBuilder().actionOpen(
-                            OpenParameter()
-                                .setChannel(Channel.No1)
-                                .setOnTime(200)
-                        )
+    override fun openCashDrawer(): Boolean = runBlocking {
+        try {
+            val connectedPrinter = printer ?: return@runBlocking false
+
+            val builder = StarXpandCommandBuilder()
+            builder.addDocument(
+                DocumentBuilder().addDrawer(
+                    DrawerBuilder().actionOpen(
+                        OpenParameter()
+                            .setChannel(Channel.No1)
+                            .setOnTime(200)
                     )
                 )
+            )
 
-                printer?.printAsync(builder.getCommands())?.await()
+            val operation = connectedPrinter.printAsync(builder.getCommands())
+                ?: return@runBlocking false
 
-                mainHandler.post {
-                    flutterApi.onLog("Cash drawer opened") { }
-                }
-            } catch (e: Exception) {
-                mainHandler.post {
-                    flutterApi.onLog("Drawer error: ${e.message}") { }
-                }
+            operation.await()
+
+            mainHandler.post {
+                flutterApi.onLog("Cash drawer opened") { }
             }
-        }
 
-        return true
+            true
+        } catch (e: Exception) {
+            mainHandler.post {
+                flutterApi.onLog("Drawer error: ${e.message}") { }
+            }
+
+            false
+        }
     }
 
     override fun getStatus(): Status {
